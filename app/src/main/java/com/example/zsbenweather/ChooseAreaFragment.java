@@ -24,6 +24,7 @@ import com.example.zsbenweather.db.Country;
 import com.example.zsbenweather.db.Province;
 import com.example.zsbenweather.util.HttpUtil;
 import com.example.zsbenweather.util.Utility;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 
 import org.litepal.LitePal;
@@ -77,7 +78,6 @@ public class ChooseAreaFragment extends Fragment {
                             Intent intent = new Intent(getActivity(), WeatherActivity.class);
                             intent.putExtra("weather_Id",weatherId);
                             startActivity(intent);
-                            getActivity().finish();
                         }else if(getActivity() instanceof  WeatherActivity){//如果碎片是在weatheractivity里启动的，说明是手动更新天气
                             WeatherActivity activity = (WeatherActivity)getActivity();//先得到weatheractivity活动实例
                             activity.drawerLayout.closeDrawers();  //把滑动菜单关闭
@@ -101,13 +101,18 @@ public class ChooseAreaFragment extends Fragment {
             return mAreaList.size();
         }
     }
-
+    public static ChooseAreaFragment newInstance(){
+        ChooseAreaFragment fragment = new ChooseAreaFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        Log.d(TAG, "newInstance: ok"+fragment.toString());
+        return fragment;
+    }
 
     public static final int LEVEL_PROVINCE = 0;
     public static final int LEVEL_CITY = 1;
     public static final int LEVEL_COUNTRY = 2;
     public static final String TAG = "zsbenn";
-
 
     private ProgressDialog progressDialog;
     private TextView titleText;
@@ -137,6 +142,7 @@ public class ChooseAreaFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Fresco.initialize(getContext());
         View view = inflater.inflate(R.layout.choose_area,container,false);
         titleText = (TextView) view.findViewById(R.id.title_text);
         backButton = (Button)view.findViewById(R.id.back_button);
@@ -154,6 +160,7 @@ public class ChooseAreaFragment extends Fragment {
         refreshLayout.setDisableContentWhenLoading(true);//加载或刷新时不允许操作视图
         refreshLayout.setDisableContentWhenRefresh(true);
 
+        Log.d(TAG, "onCreateView: ChooseAreaFragment created view");
         return view;
     }
 
@@ -161,6 +168,7 @@ public class ChooseAreaFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onCreateView: ChooseAreaFragment start");
 
         backButton.setOnClickListener(new View.OnClickListener() {//向上退一级
             @Override
