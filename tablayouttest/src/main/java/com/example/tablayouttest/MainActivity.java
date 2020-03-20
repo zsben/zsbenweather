@@ -5,7 +5,10 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
+import android.os.Environment;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -17,12 +20,17 @@ public class MainActivity extends AppCompatActivity {
     List<String> titles = new ArrayList<>();
     TabLayout tab_Layout;
     ViewPager view_Pager;
-
+    SimpleDraweeView simple_draweeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fresco.initialize(this);
         setContentView(R.layout.activity_main);
+
+        simple_draweeView = findViewById(R.id.simple_draweeView);
+        simple_draweeView.setImageURI("https://img.ivsky.com/img/tupian/pre/201806/20/dengta-003.jpg");
+        simple_draweeView.setImageURI("res://com.example.tablelayout/"+R.drawable.person_icon);
 
         tab_Layout = (TabLayout)findViewById(R.id.tab_Layout);
         view_Pager = (ViewPager)findViewById(R.id.view_Pager);

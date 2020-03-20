@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical">
 
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/simple_draweeView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        fresco:roundAsCircle="true"
+        />
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_Layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#fff"
-        app:tabIndicatorColor="#0000"
-        app:tabSelectedTextColor="#1DACF9"
-        app:tabTextColor="#808181"/>
+       />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_Pager"

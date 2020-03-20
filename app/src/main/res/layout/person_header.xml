@@ -6,11 +6,15 @@
     android:padding="10dp"
     android:background="?attr/colorPrimary">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:src="@drawable/person_icon"
-        android:layout_centerInParent="true"/>
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/person_icon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
+        fresco:placeholderImage="@mipmap/ic_person"
+        fresco:placeholderImageScaleType="fitCenter"
+        fresco:roundAsCircle="true"
+        fresco:roundingBorderPadding="11dp"/>
 
     <TextView
         android:id="@+id/mail_text"

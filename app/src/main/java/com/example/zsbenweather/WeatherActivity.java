@@ -209,6 +209,14 @@ public class WeatherActivity extends AppCompatActivity {
             degreeText.setText(degree);
             weatherInfoText.setText(weatherInfo);
 
+            //在缓存里保存城市天气，温度，方便前台服务使用
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this)
+                    .edit();
+            editor.putString("cityName",cityName);
+            editor.putString("weatherInfo",weatherInfo);
+            editor.putString("degree",degree);
+            editor.apply();
+
             //展示forecast布局，其实是更新里面的LinearLayout
             forecastLayout.removeAllViews();
             for (WeatherJson.HeWeatherBean.DailyForecastBean forecast:weather.getDaily_forecast()) {

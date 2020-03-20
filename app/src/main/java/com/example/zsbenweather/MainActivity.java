@@ -7,13 +7,20 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.example.zsbenweather.service.AutoUpdateService;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.material.navigation.NavigationView;
@@ -28,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private List<String> titles = new ArrayList<>();
     ViewPager view_Pager;
     TabLayout tab_Layout;
-    SimpleDraweeView simple_DraweeView_icon;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
         view_Pager.setAdapter(fragmentPagerAdapter);
         tab_Layout.setupWithViewPager(view_Pager);
 
+        SimpleDraweeView simpleDraweeView = findViewById(R.id.person_icon);
+        Log.d(TAG, "onCreate: "+simpleDraweeView);
+        //simpleDraweeView.setImageURI("http://img.ivsky.com/img/tupian/pre/201806/20/dengta-003.jpg");
+
         NavigationView navigationView = findViewById(R.id.person_nav);
         navigationView.setCheckedItem(R.id.person_call);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -68,5 +78,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Intent startIntent = new Intent(this, AutoUpdateService.class);
+        startService(startIntent);
     }
 }
