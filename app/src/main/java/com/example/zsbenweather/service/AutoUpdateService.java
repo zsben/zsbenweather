@@ -59,7 +59,7 @@ public class AutoUpdateService extends Service {
             NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             manager.createNotificationChannel(notificationChannel);
 
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, WeatherActivity.class);
             PendingIntent pi = PendingIntent.getActivity(this,0,intent,0);
             Notification notification = new Notification.Builder(this)
                     .setChannelId(channelId)

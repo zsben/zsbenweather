@@ -3,6 +3,7 @@ package com.example.zsbenweather;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private List<String> titles = new ArrayList<>();
     ViewPager view_Pager;
     TabLayout tab_Layout;
+    public DrawerLayout drawerLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
 
         fragments.add(ChooseAreaFragment.newInstance());
         titles.add("ChooseArea");
+        fragments.add(NewsFragment.newInstance());
+        titles.add("News");
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+
         view_Pager = findViewById(R.id.view_Pager);
         tab_Layout = findViewById(R.id.tab_Layout);
 

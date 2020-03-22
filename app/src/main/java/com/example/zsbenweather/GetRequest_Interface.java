@@ -1,5 +1,6 @@
 package com.example.zsbenweather;
 
+import com.example.zsbenweather.gson.NewsJson;
 import com.example.zsbenweather.gson.WeatherJson;
 
 import retrofit2.Call;
@@ -10,4 +11,6 @@ public interface GetRequest_Interface {
     @GET()
     Call<WeatherJson>getWeatherCall(@Url String url);
 
+    @GET
+    Call<NewsJson>getNewsCall(@Url String url);
 }
