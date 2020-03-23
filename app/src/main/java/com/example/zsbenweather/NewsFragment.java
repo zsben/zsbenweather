@@ -1,6 +1,7 @@
 package com.example.zsbenweather;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -27,6 +28,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.zsbenweather.gson.NewsJson;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.w3c.dom.Text;
 
@@ -71,7 +76,22 @@ public class NewsFragment extends Fragment {
             }
             View view = LayoutInflater.from(mContext).inflate(R.layout.news_item,parent,false);
             Log.d(TAG, "onCreateViewHolder: ok");
-            return new ViewHolder(view);
+            ViewHolder viewHolder = new ViewHolder(view);
+            viewHolder.cardView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    int position = viewHolder.getAdapterPosition();
+                    NewsJson.StoriesBean storiesBean = storiesBeans.get(position);
+                    Intent intent = new Intent(mContext,NewsActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("story",storiesBean);
+                    intent.putExtras(bundle);
+
+                    mContext.startActivity(intent);
+                }
+            });
+
+            return viewHolder;
         }
 
         @Override
@@ -93,6 +113,7 @@ public class NewsFragment extends Fragment {
     RecyclerView recyclerView;
     Retrofit retrofit;
     List<NewsJson.StoriesBean> storiesBeans = new ArrayList<>();
+    RefreshLayout refreshLayout;
 
     public static NewsFragment newInstance(){
         NewsFragment fragment = new NewsFragment();
@@ -116,6 +137,8 @@ public class NewsFragment extends Fragment {
         adapter = new NewsAdapter(storiesBeans);
         recyclerView.setAdapter(adapter);
 
+        refreshLayout = (RefreshLayout)view.findViewById(R.id.news_refresh);
+
         Log.d(TAG, "onCreateView: NewsFragment"+recyclerView.getAdapter());
         return view;
     }
@@ -123,31 +146,25 @@ public class NewsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://news-at.zhihu.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        GetRequest_Interface request = retrofit.create(GetRequest_Interface.class);
-        Call<NewsJson> call = request.getNewsCall("api/4/news/latest");
-        Log.d(TAG, "onActivityCreated: Newsfragment");
-        call.enqueue(new Callback<NewsJson>() {
+        requestNews();
+
+        refreshLayout.setEnableAutoLoadMore(true);
+        refreshLayout.setEnableOverScrollBounce(true);
+        refreshLayout.setDisableContentWhenLoading(true);
+        refreshLayout.setDisableContentWhenRefresh(true);
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
-            public void onResponse(Call<NewsJson> call, Response<NewsJson> response) {
-                 storiesBeans = response.body().getStories();
-                 getActivity().runOnUiThread(new Runnable() {
-                     @Override
-                     public void run() {
-                         adapter = new NewsAdapter(storiesBeans);
-                         recyclerView.setAdapter(adapter);
-                     }
-                 });
-                 Log.d(TAG, "onResponse: "+storiesBeans.get(0).getUrl());
-            }
-            @Override
-            public void onFailure(Call<NewsJson> call, Throwable t) {
-                Log.d(TAG, "onFailure: ok");
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                requestNews();
             }
         });
+        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                requestNews();
+            }
+        });
+
     }
 
     @Override
@@ -163,11 +180,50 @@ public class NewsFragment extends Fragment {
             case R.id.close:
                 Toast.makeText(getContext(),"backup",Toast.LENGTH_LONG).show();
                 break;
-             case R.id.homeAsUp:
+            case R.id.homeAsUp:
+                break;
+            case R.id.refresh:
+                Toast.makeText(getContext(),"正在刷新新闻",Toast.LENGTH_LONG).show();
                 break;
         }
         return true;
     }
 
-
+    private void requestNews(){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://news-at.zhihu.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        GetRequest_Interface request = retrofit.create(GetRequest_Interface.class);
+        Call<NewsJson> call = request.getNewsCall("api/4/news/latest");
+        Log.d(TAG, "onActivityCreated: Newsfragment");
+        call.enqueue(new Callback<NewsJson>() {
+            @Override
+            public void onResponse(Call<NewsJson> call, Response<NewsJson> response) {
+                storiesBeans = response.body().getStories();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter = new NewsAdapter(storiesBeans);
+                        recyclerView.setAdapter(adapter);
+                        recyclerView.scrollToPosition(storiesBeans.size()-1);
+                        refreshLayout.finishRefresh(1000 ,true);//传入false表示刷新失败
+                        refreshLayout.finishLoadMore(1000,true,false);
+                    }
+                });
+                Log.d(TAG, "onResponse: "+storiesBeans.get(0).getUrl());
+            }
+            @Override
+            public void onFailure(Call<NewsJson> call, Throwable t) {
+                Log.d(TAG, "onFailure: ok");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshLayout.finishRefresh(2000 ,false);//传入false表示刷新失败
+                        refreshLayout.finishLoadMore(2000,false,false);
+                    }
+                });
+            }
+        });
+    }
 }

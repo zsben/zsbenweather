@@ -1,5 +1,6 @@
 package com.example.zsbenweather.gson;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class NewsJson {
@@ -38,7 +39,7 @@ public class NewsJson {
         this.top_stories = top_stories;
     }
 
-    public static class StoriesBean {
+    public static class StoriesBean implements Serializable {
         /**
          * image_hue : 0x9f7b6a
          * title : 如何评价电视剧《安家》中的张乘乘？
