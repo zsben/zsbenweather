@@ -15,8 +15,8 @@
             android:orientation="horizontal">
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/news_image"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 fresco:viewAspectRatio="1"
                 fresco:placeholderImage="@drawable/ic_close"
                 fresco:roundBottomEnd="true"
